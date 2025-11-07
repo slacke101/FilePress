@@ -1,0 +1,67 @@
+<html>
+<head>
+    <title>Login - FilePress</title>
+    <style>
+        *{box-sizing:border-box}
+        body{
+            display:flex;justify-content:center;align-items:center;height:100vh;
+            font-family:Roboto,Arial,sans-serif;
+            background:linear-gradient(135deg,#2d6cdf 0%,#4d87ff 100%);
+            margin:0;color:#333;
+        }
+        #card{
+            width:320px;padding:40px 35px;background:#ffffff;border-radius:12px;
+            box-shadow:0 8px 18px rgba(0,0,0,.15);
+            text-align:center;
+        }
+        #card h2{margin:0 0 20px;color:#2d6cdf}
+        input{
+            width:100%;padding:10px 12px;margin:10px 0;border:1px solid #ccc;
+            border-radius:6px;font-size:15px;transition:border .2s;
+        }
+        input:focus{outline:none;border-color:#2d6cdf}
+        button{
+            width:100%;padding:10px;border:none;border-radius:6px;margin-top:15px;
+            background:#2d6cdf;color:#fff;font-size:15px;cursor:pointer;
+            transition:background .2s;
+        }
+        button:hover{background:#2457b4}
+        #msg{margin-top:12px;color:#d93025;font-size:14px}
+    </style>
+</head>
+<body>
+    <div id="card">
+        <h2>FilePress Login</h2>
+        <input id="username" placeholder="Username" autocomplete="username"/>
+        <input id="password" type="password" placeholder="Password" autocomplete="current-password"/>
+        <button id="login-btn">Login</button>
+        <div id="msg"></div>
+    </div>
+
+    <script>
+        const runLogin = async () => {
+            const username=document.getElementById('username').value;
+            const password=document.getElementById('password').value;
+            try{
+                const res=await fetch('/api/login',{
+                    method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({username,password})
+                });
+                const data=await res.json();
+                if(res.ok){
+                    localStorage.setItem('token',data.token);
+                    window.location='/';
+                }else{
+                    document.getElementById('msg').innerText=data.error||'Login failed';
+                }
+            }catch(e){
+                document.getElementById('msg').innerText='Login failed';
+            }
+        };
+
+        document.getElementById('login-btn').addEventListener('click', runLogin);
+        document.addEventListener('keypress', e=>{ if(e.key==='Enter') runLogin(); });
+    </script>
+</body>
+</html>
